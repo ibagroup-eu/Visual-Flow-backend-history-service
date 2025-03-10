@@ -22,9 +22,11 @@ package eu.ibagroup.vf.history.model;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Entity;
 import javax.persistence.Column;
@@ -32,17 +34,22 @@ import javax.persistence.OneToOne;
 import javax.persistence.ManyToOne;
 import javax.persistence.JoinColumn;
 import javax.persistence.CascadeType;
+import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "job_history")
+@Table(name = "job_history", uniqueConstraints = {@UniqueConstraint(columnNames = {
+        "job_id", "started_at"})})
 public class JobHistory implements Serializable {
     @Id
-    @GenericGenerator(name="system-uuid", strategy = "uuid")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_generator")
+    @SequenceGenerator(name = "seq_generator", sequenceName = "seq", allocationSize = 1, initialValue = 1)
     @Column(name = "id")
+    private Long id;
+    @Column(name = "job_id")
     private String jobId;
     @Column(name = "job_name")
     private String jobName;
